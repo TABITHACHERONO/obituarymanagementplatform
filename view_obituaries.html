@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ obituary.name }}'s Obituary</title>
+    <meta name="description" content="{{ obituary.content|truncatewords:30 }}">
+    <meta name="keywords" content="obituary, {{ obituary.name }}, {{ obituary.date_of_birth }}, {{ obituary.date_of_death }}">
+    <meta property="og:title" content="{{ obituary.name }}'s Obituary">
+    <meta property="og:description" content="{{ obituary.content|truncatewords:30 }}">
+    <meta property="og:type" content="article">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Obituaries</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>Obituaries</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Date of Birth</th>
+                <th>Date of Death</th>
+                <th>Author</th>
+                <th>Submission Date</th>
+                <th>Content</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for obituary in obituaries %}
+            <tr>
+                <td>{{ obituary.name }}</td>
+                <td>{{ obituary.date_of_birth }}</td>
+                <td>{{ obituary.date_of_death }}</td>
+                <td>{{ obituary.author }}</td>
+                <td>{{ obituary.submission_date }}</td>
+                <td>{{ obituary.content }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div>
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}">Share on Facebook</a>
+        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}">Share on Twitter</a>
+    </div>
+    <script type="application/ld+json">
+        {
+            "@context": "http://schema.org",
+            "@type": "Obituary",
+            "name": "{{ obituary.name }}",
+            "description": "{{ obituary.content|truncatewords:30 }}",
+            "datePublished": "{{ obituary.submission_date|date:"Y-m-d" }}"
+        }
+        </script>
+</body>
+</html>

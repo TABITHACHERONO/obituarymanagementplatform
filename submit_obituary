@@ -1,0 +1,129 @@
+from django.shortcuts import render, redirect
+from .models import Obituary
+from django.utils.text import slugify
+
+def submit_obituary(request):
+    if request.method == 'POST':
+        name = request.POST['name']
+        date_of_birth = request.POST['date_of_birth']
+        date_of_death = request.POST['date_of_death']
+        content = request.POST['content']
+        author = request.POST['author']
+        slug = slugify(name)
+        obituary = Obituary(name=name, date_of_birth=date_of_birth, date_of_death=date_of_death, content=content, author=author, slug=slug)
+        obituary.save()
+        return redirect('view_obituaries')
+    return render(request, 'obituary_form.html')
+Add URL patterns:
+
+python
+Copy code
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('submit_obituary/', views.submit_obituary, name='submit_obituary'),
+    path('view_obituaries/', views.view_obituaries, name='view_obituaries'),
+]
+Task 5: Backend Script for Data Retrieval
+Create the view_obituaries view in Django:
+
+python
+Copy code
+def view_obituaries(request):
+    obituaries = Obituary.objects.all()
+    return render(request, 'view_obituaries.html', {'obituaries': obituaries})
+Create view_obituaries.html:
+
+html
+Copy code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Obituaries</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>Obituaries</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Date of Birth</th>
+                <th>Date of Death</th>
+                <th>Author</th>
+                <th>Submission Date</th>
+                <th>Content</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for obituary in obituaries %}
+            <tr>
+                <td>{{ obituary.name }}</td>
+                <td>{{ obituary.date_of_birth }}</td>
+                <td>{{ obituary.date_of_death }}</td>
+                <td>{{ obituary.author }}</td>
+                <td>{{ obituary.submission_date }}</td>
+                <td>{{ obituary.content }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
+Task 6: SEO and Social Media Optimization
+Add dynamic meta tags in view_obituaries.html:
+
+html
+Copy code
+<head>
+    <title>{{ obituary.name }}'s Obituary</title>
+    <meta name="description" content="{{ obituary.content|truncatewords:30 }}">
+    <meta name="keywords" content="obituary, {{ obituary.name }}, {{ obituary.date_of_birth }}, {{ obituary.date_of_death }}">
+    <meta property="og:title" content="{{ obituary.name }}'s Obituary">
+    <meta property="og:description" content="{{ obituary.content|truncatewords:30 }}">
+    <meta property="og:type" content="article">
+</head>
+Add social media sharing buttons:
+
+html
+Copy code
+<div>
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}">Share on Facebook</a>
+    <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}">Share on Twitter</a>
+</div>
+Add structured data for search engines:
+
+html
+Copy code
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Obituary",
+    "name": "{{ obituary.name }}",
+    "description": "{{ obituary.content|truncatewords:30 }}",
+    "datePublished": "{{ obituary.submission_date|date:"Y-m-d" }}"
+}
+</script>
+Create an XML sitemap:
+
+Install django-sitemaps:
+
+bash
+Copy code
+pip install django-sitemaps
+Configure sitemap.py and add to urls.py.
+
+Task 7: Testing and Validation
+Submit sample obituaries using the form.
+**Verify data
+
+
+
+
+
+
+
+
